@@ -62,5 +62,32 @@ namespace DartLeague.Controllers
             return Ok(legs);
         }
 
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(Guid id, int player1Score, int player2Score)
+        {
+            var leg = await _db.Legs.FindAsync(id);
+
+            if (leg == null)
+                return NotFound($"Leg {id} not found");
+
+            leg.UpdateScores(player1Score, player2Score);
+            await _db.SaveChangesAsync();
+
+            return Ok(leg);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var leg = await _db.Legs.FindAsync(id);
+
+            if (leg == null)
+                return NotFound($"Leg {id} not found");
+
+            _db.Legs.Remove(leg);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
