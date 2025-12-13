@@ -1,4 +1,5 @@
 ﻿using DartLeague.Application.Matches;
+using DartLeague.Contracts;
 using DartLeague.Infrastructure.Db;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace DartLeague.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Guid matchId, int player1Score, int player2Score)
+        public async Task<IActionResult> Create(Guid matchId, [FromBody] CreateLegRequest request)
         {
             var match = await _db.Matches.FindAsync(matchId);
 
@@ -26,7 +27,7 @@ namespace DartLeague.Controllers
                 return NotFound("Match not found");
             }
 
-            var leg = new Leg(match, player1Score, player2Score);
+            var leg = new Leg(match, request.Player1Score, request.Player2Score);
 
             match.Legs.Add(leg);
             await _db.SaveChangesAsync();
